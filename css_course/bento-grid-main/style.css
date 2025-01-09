@@ -1,0 +1,262 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+/* root */
+ :root {  /*Same as html */
+    --clr-Purple-100: hsl(254, 88%, 90%); 
+    --clr-Purple-500: hsl(256, 67%, 59%);
+    --clr-Yellow-100: hsl(31, 66%, 93%);
+    --clr-Yellow-500: hsl(39, 100%, 71%);
+    --clr-White: hsl(0, 0%, 100%);
+    --clr-Black: hsl(0, 0%, 7%);
+
+    --ff-main: "DM Sans", serif;
+    --fs-body: 1.125rem;
+    --fs-heading: 1.75rem;
+
+    --fw-400: 400;
+    --fw-500: 500;
+}
+
+/* helper classes */
+
+.grid {
+    display: grid;
+    gap: 1rem;
+    place-content: center;
+}
+
+/* text styles */
+h1 {
+    font-size: 2.75rem;
+    font-weight: var(--fw-500);
+}
+
+h2 {
+    font-size: var(--fs-heading);
+    font-weight: var(--fw-500);
+    line-height: 1.1;
+}
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+img {
+    max-width: 80%;
+    display: block;
+}
+
+body {
+    font-family: var(--ff-main);
+    font-weight: var(--fw-400);
+    line-height: 1.1;
+    color: var(--clr-Black);
+    background: #f9f9f9;
+
+    padding: 100px;
+}
+
+
+
+/* layout styles */
+.bento-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: 13rem 13rem 13rem;
+    grid-template-areas: 
+    'column1 column2 column3'
+    'column1 column2 column3'
+    'column1 column4 column4';
+    gap: 1rem;
+
+    max-width: 60rem;
+    margin-inline: auto;
+
+}
+
+.bento-grid-item--element {
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.bento-grid-item:nth-child(1){
+    grid-template-rows: 1fr 1fr;
+}
+
+.bento-grid-container > *, .inside-element {
+    display: grid;
+    gap: 1rem;
+}
+
+.inside-element {
+    grid-template-columns: 1fr 1fr;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.inside-element:nth-child(1) {
+    grid-template-columns: .95fr 2fr;
+    /* border: 2px solid red; */
+}
+
+.column-one {
+    grid-area: column1;
+}
+
+.column-two {
+    grid-area: column2;
+}
+
+.column-three {
+    grid-area: column3;
+}
+
+.column-four {
+    grid-area: column4;
+}
+
+
+
+/* ui components */
+
+.create {
+    background-color: var(--clr-Yellow-100);
+    padding: 2rem !important;
+}
+
+.content {
+    background-color: var(--clr-Yellow-500);
+    padding: 2rem !important;
+}
+
+.media {
+    color: var(--clr-White);
+    background-color: var(--clr-Purple-500);
+    text-align: center;
+    place-content: center;
+}
+
+.media img {
+    max-width: 10rem;
+    margin-inline: auto; /* Same as right and left margin */
+}
+
+.manage {
+    background-color: var(--clr-White);
+    position: relative;
+    overflow: hidden;
+
+    height: 100%;
+
+    margin-bottom: 1rem;
+}
+
+.manage img {
+    max-width: 100%;
+    position: relative;
+    right: -2rem;
+}
+
+.posting {
+    position: relative;
+    background-color: var(--clr-Yellow-500);
+
+    overflow: hidden;
+}
+
+.posting img {
+    position: absolute;
+    bottom: -4rem;
+    left: 1.5rem;
+}
+
+.schedule {
+    place-content: center;
+    padding-left: 1.5rem;
+    background-color: var(--clr-Purple-100);
+    overflow: hidden;
+}
+
+.schedule img {
+    position: relative;
+    right: -1.5rem;
+    max-width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1em;
+}
+
+.audience {
+    background-color: var(--clr-White);
+    place-content: center;
+}
+
+.followers {
+    display: flex;
+    align-items: center;
+    background-color: var(--clr-Purple-500);
+    color: var(--clr-White);
+}
+
+.followers img {
+    width: 50%;
+}
+
+
+/* media querey */
+
+@media screen and (max-width: 950px){
+    .bento-grid-container {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 13rem 13rem 13rem 13rem;
+        grid-template-areas: 
+        'column2 column3'
+        'column2 column3'
+        'column4 column4'
+        'column1 column1';
+    }
+
+    .column-one {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .manage img {
+        max-width: 80%;
+        position: relative;
+        margin-bottom: 1rem;
+    }
+    
+    .posting {
+        position: relative;
+        background-color: var(--clr-Yellow-500);
+    
+        overflow: hidden;
+    }
+    
+    .posting img {
+        position: absolute;
+        bottom: -4rem;
+        left: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 650px){
+    .bento-grid-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        grid-template-areas: 
+        'column2'
+        'column3'
+        'column4'
+        'column1';
+    }
+
+    .column-one {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .inside-elementm, .inside-element:nth-child(1), .column-one {
+        grid-template-columns: 1fr;
+    }
+}

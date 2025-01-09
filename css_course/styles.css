@@ -1,0 +1,349 @@
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+  }
+  
+  section {
+    padding: 6rem 0;
+  }
+  
+  section h2 {
+    margin-bottom: 2rem;
+  }
+  
+  .container {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 3rem 4rem;
+  }
+  
+  /* TEMPORARY - Remove after adding all the styles */
+  /* img {
+    display: block;
+    width: 100px;
+    height: 100px;
+  } */
+
+    /* 1. Flex - Header Navigation */
+  
+
+  .header {
+    background: black;
+    color: white;
+    padding: 1.5rem 1rem;
+  }
+
+  .header-logo{
+    font-size: 1.5rem;
+    font-weight: bold;
+
+  }
+  
+
+  .header-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1500px;
+    padding: 0 4rem;
+    margin: 0 auto; /*same as align-content: center */
+  }
+
+  .header-links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .header-links a { 
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+   }
+
+  .header-links a:hover {
+    color: #9c9c9c;
+    
+  }
+
+  /* 2. Flex and Column - Featured Section */
+  
+  .featured {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    margin: 0;
+    height: 600px;
+  }
+
+  .featured-image{
+    flex-basis: 50%;
+    height: 100%;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+  }
+
+  .featured-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    transform: translate(50px, 100px) scale(0.8, 1) rotate(30deg); /* 30rad */
+  }
+
+  .featured-content {
+    flex-basis: 50%;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .featured-more { 
+    color: white;
+    background: black;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    border: none;
+  }
+
+  .featured-more:hover {
+    background: #414141;
+    color: #d8d8d8;
+    cursor: pointer;
+  }
+
+  .featured-footer { 
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 1rem;
+  }
+
+  .featured-content p {
+    color: black
+  }
+
+  /* 3. Flex/Grid List - Latest Cards */
+  .latest {
+    padding: 6rem 0;
+    background: white;
+    width: 100%;
+  }
+
+  .latest-title { 
+    margin-bottom: 1rem;
+  }
+
+  .latest-subtitle {
+    margin-bottom: 2rem;
+    color: grey;
+  }
+
+  /* .latest-list {
+    display: flex;
+    justify-content: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+  } */
+
+  .latest-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin: 0 auto;
+  }
+
+  .latest-card {
+    min-width: 300px;
+    width: 400px;
+    height: 500px;
+    border-radius: 10px;
+    box-shadow: none;
+    background: white;
+    overflow: hidden;
+  }
+
+  @keyframes loko {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg)
+    }
+  }
+
+  .latest-card img {
+    width: 100%;
+    height:250px;
+    object-fit: cover;
+
+    /* transform: skew(20deg, 10deg); */
+    transform-origin: center center;
+    transform: rotateX(180deg) translateZ(300px);
+    perspective: 1000px;
+
+    animation: loko 2s ease-in 10s infinite alternate;
+  }
+
+
+  .button {
+    padding: 20px 40px;
+    background-color: blue;
+    display: inline-block;
+    justify-self: center;
+    align-self: center;
+    margin-inline: auto;
+    color: white;
+    text-align: center;
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);  
+  }
+
+  .button:hover {
+    transform: scale(1.1) rotate(30deg);
+    animation-play-state: paused;
+    /* background-color: #444; */
+  }
+
+  @keyframes bounce {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0); }
+  }
+
+  .button {
+    animation: bounce 2s cubic-bezier(0.68, -0.55, 0.27, 1.55) 1s infinite;    /* Animations override transitions */
+    animation-fill-mode: forwards
+  }
+
+  .latest-content {
+    padding: 0.5rem;
+  }
+
+  .latest-content h3 {
+    padding: 0.5rem;
+  }
+
+  .latest-content p {
+    color: grey;
+    padding: 1.5rem;
+  }
+
+  .latest-more {
+    text-decoration: none;
+  }
+  /* 4. Flex/Grid 2D - Hot News */
+  
+  /* 4a. Flex/Grid 2D - Hot News - Flex Version */
+  
+  /* 4b. Flex/Grid 2D - Hot News - Grid Version */
+  
+  /* 5. Grid - Masonry Layout */
+  
+  /* 6. Grid Templates - News Gallery */
+  
+  /* 7. Images and Styling */
+  
+
+  .container_exp {
+    display: flex;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5rem;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    overflow-x: scroll ;
+    overflow-y: hidden;
+  }
+
+  @supports (scrollbar-color: blue red) { 
+    .container_exp {
+      scrollbar-width: auto;
+      scrollbar-color: blue red;
+      scroll-padding: 3rem;
+    }
+  }
+
+  @supports (-webkit-scrollbar: none) {
+    .container_exp {
+      scrollbar-width: initial; /* Reset Firefox properties for WebKit browsers */
+      scrollbar-color: initial;
+    }
+  
+    .container_exp::-webkit-scrollbar {
+      width: 30px;
+      height: 30px;
+    }
+  
+    .container_exp::-webkit-scrollbar-thumb {
+      background: linear-gradient(90deg, #555, #999);
+      border-radius: 3em;
+      border: 3px solid red;
+    }
+  
+    .container_exp::-webkit-scrollbar-track {
+      border-radius: 10em;
+      background-color: aqua;
+    }
+  }
+
+  html {
+    overflow-x: scroll;
+    overflow-y: scroll;
+  }
+
+  html::-webkit-scrollbar {
+    width: 50px;
+    background-color: orange;
+    border-radius: 1em;
+  }
+
+  html::-webkit-scrollbar-track:vertical{
+    border-radius: 10em;
+    background-color: aqua;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    border-radius: 10em;
+    height: 500px;
+    transform: rotate(90);
+    background-color: black;
+  }
+
+  html::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  html {
+    background-color: #333;
+  }
+
+  .nested_box {
+    display: inline;
+    width: 200px;
+    height: 100px;
+    padding: 1em;
+    margin: 1em;
+    border: 1em dotted red;
+    background-color: #414141;
+  }
+
+  .nested_box ::selection{
+    background-color: aqua;
+    color: orange;
+  }
+
+  .PedroPuto::selection { 
+    background-color: aqua;
+    color: purple;
+  }
