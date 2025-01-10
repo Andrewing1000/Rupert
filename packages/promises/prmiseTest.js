@@ -26,8 +26,8 @@ const tests = [
   {
     name: 'Basic synchronous resolve',
     test: function () {
-      return new MyPromise((resolve, reject, thisArg) => {
-        resolve(42, thisArg);
+      return new MyPromise((resolve, reject) => {
+        resolve(42);
       }).then((value) => {
         if (value !== 42) {
           throw new Error(`Expected 42, got ${value}`);
@@ -262,6 +262,27 @@ const tests = [
           throw new Error(`Expected 'async check', got ${val}`);
         }
       });
+
+      syncFlag = false;
+      return p;
+    },
+  },
+
+  {
+    name: 'Error prop in chaining of Promises',
+    test: function () {
+      // We check that `then` callbacks don't fire immediately,
+      // but at least after the current JS tick. This is a rough check.
+      let syncFlag = true;
+      const p = new Promise((resolve, reject) => {
+        reject('flagsito');
+      }).then(
+        (val) => {console.log("OnFulfill", val)},
+        (val) => {console.log("OnReject", val); return val}
+    ).then(
+      (val) => console.log("Second OnFulfill", val),
+      (val) => console.log("Second on Reject", val),
+    );
 
       syncFlag = false;
       return p;
