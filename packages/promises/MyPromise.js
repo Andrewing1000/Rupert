@@ -18,8 +18,7 @@ export class MyPromise{
         if(this.locked) return;
         this.resolved = true;
         if(!val || !(val.then)){
-            this.value = val;
-            this.fulfill(this.value);
+            this.fulfill(val);
             return;
         }
         try{
@@ -33,6 +32,7 @@ export class MyPromise{
     }
 
     fulfill(value=undefined){
+        if(this.locked) return;
         this.value = value
         this.toFulfill.forEach((callback) => queueMicrotask(callback))
     }
@@ -47,7 +47,7 @@ export class MyPromise{
         if(!handler && typeof handler != 'function') return
         if(this.fulfilled){
             queueMicrotask(handler)
-            return
+            return;
         }
         this.toFulfill.push(handler)
     }
@@ -56,15 +56,25 @@ export class MyPromise{
         if(!handler && typeof handler != 'function') return
         if(this.rejected){
             queueMicrotask(handler)
-            return
+            return;
         }
         this.toReject.push(handler)
     }
 
     then(onFulfill=undefined, onReject=undefined){  
-        if(onReject === undefined) 
         return new MyPromise((resolve, reject) => {
-
+                if(onFulfill && (typeof onFulfill) !== 'function') onFulfill = (x) => x;
+                if(onFulfill) this.queueFulfill(() => {
+                    try{resolve(onFulfill(this.value));}
+                    catch(err){reject(err)};
+                })
+                    
+                if(onReject === undefined) this.queueReject(() => reject(this.reason))
+                if(onReject !== null && (typeof onReject) !== 'function') onReject = (x) => {throw x};
+                if(onReject) this.queueReject(() => {
+                    try{resolve(onReject(this.reason))}
+                    catch(err){reject(err)}
+                })
             })
     }
 
@@ -73,6 +83,113 @@ export class MyPromise{
     }
 
     finally(finallyHandler){
-        return this.then(() => finallyHandler());
+        return this.then(
+            (val) => {
+                let res = finallyHandler()
+                if(res?.then) return res.then((_)=>val)  
+                return val;
+            },
+            (err) => {finallyHandler(); throw err})
+    }
+
+    static resolve(value){
+        if(value.constructor === MyPromise || value.constructor === Promise) return value;
+        return new MyPromise((resolve) => resolve(value))
+    }
+
+    static reject(value){
+        return new MyPromise((_, reject) => reject(value))
+    }
+
+    static all(list){
+        return new MyPromise((resolve, reject) => {
+            if(list?.length == 0){
+                resolve([])
+                return;
+            }
+            let resolutions = Array(list.length);
+            let count = 0;
+            list.forEach((prom, index) => {
+                prom = MyPromise.resolve(prom)
+                prom.then((val) => {
+                    resolutions[index] = val
+                    count++;
+                    if(count === list.length) resolve(resolutions)
+                },
+                (err) => reject(err))
+            })
+        })
+    }
+
+    static allSettled(list){
+        return new Promise((resolve, reject) => {
+            if(list?.length == 0){
+                resolve([])
+                return;
+            }
+            let settlements = Array(list.length)
+            let count = 0;
+            list.forEach((prom, index) => {
+                prom = MyPromise.resolve(prom)
+                prom.then((val) => {
+                    settlements[index] = {"status": "fulfilled", value: val}
+                    count++;
+                },
+                (val) => {
+                    settlements[index] = {"status":"rejected", reason: val}
+                    count++;
+                }).finally(() => count===list.length? resolve(settlements): false)
+            })
+        })
+    }
+
+    static any(list){
+        return new MyPromise((resolve, reject) => {
+            if(list?.length == 0){
+                reject(new AggregateError([]))
+                return;
+            }
+            let rejections = Array(list.length)
+            let count = 0
+            list.forEach((prom, index) => {
+                prom = MyPromise.resolve(prom)
+                prom.then(
+                    (val) =>{
+                        resolve(val)
+                    },
+                    (err) => {
+                        rejections[index] = err
+                        count++;
+                        if(count===list.length) reject(new AggregateError(rejections))
+                    }
+                )
+            })
+        })
+    }
+
+    static race(list){
+        return new MyPromise((resolve, reject) => {
+            list.forEach((prom, index) => {
+                prom = MyPromise.resolve(prom)
+                prom.then(resolve, reject)
+            })
+        })
+    }
+
+    static try(func, ...args){
+        return new MyPromise((resolve, reject) => {
+            try{resolve(func(args))}
+            catch(err){reject(err)}
+        })
+    }
+
+    static withResolvers(){
+        let obj = {}
+        const prom = new MyPromise((resolve, reject) => {
+            obj["resolve"] = resolve
+            obj["reject"] = reject
+        })
+        obj["promise"] = prom
+        return obj
     }
   }
