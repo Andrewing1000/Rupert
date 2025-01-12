@@ -66,13 +66,17 @@ export default function App() {
       </Navbar>
       
       <Main>
-        <Panel>
-          <MovieList movies={movies}/>
+        <Panel element={<MovieList movies={movies}/>}>
+          {/* <MovieList movies={movies}/> */}
         </Panel>
 
-        <Panel>
+        <Panel element={<>
           <WatchedSummary watched={watched}/>
           <WatchedList watched = {watched}/>
+          </>}>
+{/*  
+          <WatchedSummary watched={watched}/>
+          <WatchedList watched = {watched}/>  */}
         </Panel>
       </Main>
     </>
@@ -149,12 +153,12 @@ function WatchedMovie({movie}){
 }
 
 
-function Panel({children}){
+function Panel({element, children}){
   const [isOpen2, setIsOpen2] = useState(true);
   
   return <div className="box">
     <ToggleButton isOpen1={isOpen2} setIsOpen1={setIsOpen2}/>
-    {isOpen2 && children}
+    {isOpen2 && element}
   </div>;
 }
 
