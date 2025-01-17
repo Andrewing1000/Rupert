@@ -1,59 +1,63 @@
-import { useState } from "react";
-
-const tempMovieData = [
-  {
-    imdbID: "tt1375666",
-    Title: "Inception",
-    Year: "2010",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-  },
-  {
-    imdbID: "tt0133093",
-    Title: "The Matrix",
-    Year: "1999",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
-  },
-  {
-    imdbID: "tt6751668",
-    Title: "Parasite",
-    Year: "2019",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
-  },
-];
-
-const tempWatchedData = [
-  {
-    imdbID: "tt1375666",
-    Title: "Inception",
-    Year: "2010",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-    runtime: 148,
-    imdbRating: 8.8,
-    userRating: 10,
-  },
-  {
-    imdbID: "tt0088763",
-    Title: "Back to the Future",
-    Year: "1985",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGUtZjIxNi00ZjBkLTg1MjgtOWIyNThiZWIwYjRiXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
-    runtime: 116,
-    imdbRating: 8.5,
-    userRating: 9,
-  },
-];
+import { useEffect, useRef, useState } from "react";
+import StarRating from "./StarRating";
+import { useMovies } from "./useMovies";
+import { useLocalStorageState } from "./useLocalStorageState";
+import { useKey } from "./useKey";
 
 const average = (arr) =>
-  arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
+  arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0).toFixed(2);
+
+
+const APIKEY=  "740d6162"
 
 export default function App() {
   const [query, setQuery] = useState("");
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [watched, setWatched] = useLocalStorageState([], "watched");
+  const [selectedId, setSelectedId] = useState(null);
+  const {movies, error, loading} = useMovies(query, handleClose)
+  //console.log (query)
+
+  //Effects are executed after browser paint phase
+  //[] excuted upon mount render
+  //<empty>/undefined executed upon every render
+  //[a, ...] executed upen a state change of a
+
+  //Component lifecycle:
+  //Mount--> Adder to the fiver tree
+  //Rerender
+  //Removed
+
+
+  //Effect main goal is not running code at a certain part of the LC
+  //Instead their are meant to keep sync with external dependencies
+
+  //Effects have three parts
+  //Effect code
+  //Dependency array
+  //Cleanup function as their return value
+  
+  //!!!DO NOT OVERUSE IT, it does not replace event handlers
+  function handleClose(){
+    setSelectedId(null)
+  }
+
+  function setMovieClose(){
+    setSelectedId(null);
+  }
+
+  function handleAddMovie(movie){
+    const included = watched.some(item => item.imdbID===movie.imdbID)
+    if(!included){
+      setWatched([...watched, movie])
+      // localStorage.setItem('watched', JSON.stringify([...watched, movie])) //Persistency option 1
+    } 
+  }
+  //Another effect with [] as its depedency array could be used to load watched upon initialization
+  //But we are going to use a baseState with a callback: useState(function() {const storedValue = localStorage.getItem('watched')})
+
+  function handleDelete(id){
+    setWatched(watched.filter(item => item.imdbID!==id))
+  }
 
   return (
     <>
@@ -66,17 +70,40 @@ export default function App() {
       </Navbar>
       
       <Main>
-        <Panel element={<MovieList movies={movies}/>}>
-          {/* <MovieList movies={movies}/> */}
-        </Panel>
 
-        <Panel element={<>
-          <WatchedSummary watched={watched}/>
-          <WatchedList watched = {watched}/>
-          </>}>
-{/*  
-          <WatchedSummary watched={watched}/>
-          <WatchedList watched = {watched}/>  */}
+         
+        <Panel>
+          {/* {loading?
+          <Loader/> :
+          <MovieList movies={movies}/>
+          } */}
+
+          {loading && <Loader/>}
+          {!loading && !error &&
+             <MovieList movies={movies}
+            setSelectedId={setSelectedId}
+            />}
+          {error && <ErrorMessage message={error}/>}
+        </Panel>
+        
+
+        {/* <Panel element={<MovieList movies={movies}/>}>
+          <MovieList movies={movies}/>
+        </Panel> //PASSING CHILDREN AS EXPLICIT PROPS */}  
+
+        <Panel>
+          {selectedId!==null?
+            <MovieDetail
+            onClose={setMovieClose}
+            movie={movies.find((movie) => movie.imdbID===selectedId)}
+            watchedObj={watched.find(movie => movie.imdbID ===selectedId)}
+            onAddWatched={(movie)=>{handleAddMovie(movie)}}
+            />:
+            <>
+            <WatchedSummary watched={watched}/>
+            <WatchedList watched = {watched} onDelete = {handleDelete}/>
+            </>
+          }
         </Panel>
       </Main>
     </>
@@ -91,6 +118,14 @@ export default function App() {
 //Logo: Presentational
 //Search: Stateful
 //Results: Presentational
+
+function Loader(){
+  return <p className="loader">Loading...</p>
+}
+
+function ErrorMessage({message}){
+  return <p className="error">{message}</p>
+}
 
 function Main({children}){
   return  <main className="main">
@@ -125,13 +160,17 @@ function WatchedSummary({watched}) {
     </div>
 }
 
-function WatchedList({watched}){
+function WatchedList({watched, onDelete}){
   return <ul className="list">
-          {watched.map((movie) => (<WatchedMovie movie={movie} key={movie.imdbID}/>))}
+          {watched.map((movie) =>
+             (<WatchedMovie
+              movie={movie}
+              onDelete={onDelete}
+              key={movie.imdbID}/>))}
         </ul>
 }
 
-function WatchedMovie({movie}){
+function WatchedMovie({movie, onDelete}){
   return <li key={movie.imdbID}>
     <img src={movie.Poster} alt={`${movie.Title} poster`} />
     <h3>{movie.Title}</h3>
@@ -148,6 +187,9 @@ function WatchedMovie({movie}){
         <span>⏳</span>
         <span>{movie.runtime} min</span>
       </p>
+
+      <button  className='btn-delete'
+      onClick={() => onDelete(movie.imdbID)}>X</button>
     </div>
   </li>
 }
@@ -158,13 +200,18 @@ function Panel({element, children}){
   
   return <div className="box">
     <ToggleButton isOpen1={isOpen2} setIsOpen1={setIsOpen2}/>
-    {isOpen2 && element}
+    {isOpen2 && children}
   </div>;
 }
 
-function MovieList({movies}) {
+function MovieList({movies, setSelectedId, setOnClose}) {
   return <ul className="list">
-        {movies?.map((movie) => <MovieCard movie={movie} key={movie.imdbID}/>)}
+        {movies?.map((movie) => 
+          <MovieCard
+            movie={movie}
+            onSelected={()=>setSelectedId(movie.imdbID)}
+            onClose={setOnClose}
+            key={movie.imdbID}/>)}
       </ul>
 }
 
@@ -177,8 +224,8 @@ function ToggleButton({setIsOpen1, isOpen1}){
   </button>
 }
 
-function MovieCard({movie}){
-  return <li key={movie.imdbID}>
+function MovieCard({movie, onSelected}){
+  return <li key={movie.imdbID} onClick={onSelected}>
     <img src={movie.Poster} alt={`${movie.Title} poster`} />
     <h3>{movie.Title}</h3>
     <div>
@@ -188,6 +235,132 @@ function MovieCard({movie}){
       </p>
     </div>
   </li>
+}
+
+function MovieDetail({movie, onClose, onAddWatched, watchedObj}){
+  const [movieDetails, setMovieDetails] = useState(null) 
+  const [userRating, setUserRating] = useState(null)
+  const [isLoading, setIsLoading] = useState(false);
+  const countRef = useRef(0)
+  //if(<condition>) const [a, setA] =useState(<newValue>)
+  //wont work because the default value is only loading in the
+  //mounting phase
+
+
+  //setState2(newState2)
+  //setState2(f(state2)) // will update based on oldState1
+  //since set states are dont async and state1 is a reference to the old value
+
+  //setState2(newState2)
+  //setState2((x) => f(x)) // will update with newState2
+  //as async calls are executed in the same order as they were declared
+
+
+
+/* eslint-disable */         //Use this to disable the linting/
+  // this leads to errors if(false) useState(1)
+
+  
+  useKey("Escape", onClose)
+    
+  useEffect(
+    function(){
+      if(userRating) countRef.current += 1
+    }
+    , [userRating])
+
+  useEffect(
+    function(){
+      if(!(movieDetails?.Title)) return;
+      document.title = movieDetails.Title
+      return () => {document.title = "usePopcorn"} // cleanup function
+    }
+    , [movieDetails])
+      
+      //JS closure: Variables declared in a function are remembered in its execution
+      //even if the component they belog to is destroyed beforehand
+      
+    function handleAdd(){
+      const newMovie = {
+        ...movieDetails,
+        imdbRating: Number(movieDetails.imdbRating),
+        runtime: movieDetails.Runtime?.split(" ").at(0),
+        userRating,
+        conutRating: countRef.current,
+      }
+      onAddWatched(newMovie)
+      onClose()    
+    }
+
+  //Mount
+  //Commit
+  //Layout Effect
+  //Browser Paint
+  //Cleantup
+  //Effect
+  //Unmount 
+  //Cleanup
+
+  //Clean is before the effect is executed again
+  //and after the component unmounts
+  
+  //Http request -> Cancel request
+  //Start timer -> Cancel timer
+  //Add event listener -> remove event listener
+  
+  
+
+  useEffect(function() {
+    async function getMovieDetails() {
+      setIsLoading(true);    
+      const res = await fetch(
+        `http://www.omdbapi.com/?apikey=${APIKEY}&i=${movie.imdbID}`);
+      const data = await res.json();
+      setIsLoading(false);
+      setMovieDetails(data);
+    }
+
+    getMovieDetails()
+  }, [movie])
+
+  return <div className="details">
+    {isLoading?
+    <Loader/>:
+    <>
+      <header>
+        <button className="btn-back" onClick={onClose}>
+        &larr;
+        </button>
+        <img src={movieDetails?.Poster} alt={`Poster of ${movie.imdbID}`}/>
+        <div className="details-overview">
+          <h2>{movieDetails?.Title}</h2>
+          <p>{movieDetails?.Released}</p>
+          <p>{movieDetails?.Genre}</p>
+          <p>{movieDetails?.imdbRating} IMDb Rating</p>
+        </div>
+      </header>
+      
+
+      <section>
+        <div className='rating'>
+          <StarRating 
+          defaultRating={watchedObj?.userRating ?? 0}
+          onSetRating={setUserRating}
+          size={2.3}
+          maxRating={10}/>
+
+          <button className="btn-add" onClick={handleAdd}>
+            {!watchedObj && "+ Add to list"}
+            {watchedObj && watchedObj.userRating!==userRating && "Edit rating"}
+          </button>
+        </div>
+        <p><em>{movieDetails?.Plot}</em></p>
+        <p>Starring {movieDetails?.Actors}</p>
+        <p>Directed by {movieDetails?.Airector}</p>
+      </section>
+    </>
+    }
+  </div>
 }
 
 function Navbar({children}) {
@@ -211,11 +384,39 @@ function Results({movies}){
 }
 
 function Search({query, setQuery}){
+
+  // useEffect(function(){ 
+  //   const element = document.querySelector(".search") //Against the react pardigm
+  //   element.focus() //Flimsy implementation, suseptible to bugs
+  // }, [])
+
+  const inputElement = useRef(null)
+
+  useKey("Enter", () => {setQuery(""), inputElement.current.focus()})  
+  //useRef == useState but does not trigger rerenders when its updated
+  //useRef is mutable
+  //useRef updates are synchronous
+
   return <input
   className="search"
   type="text"
   placeholder="Search movies..."
   value={query}
-  onChange={(e) => setQuery(e.target.value)} />
+  ref={inputElement}
+  onChange={(e) => {
+    setQuery(e.target.value);}
+  } />
 }
+
+
+//Two thing can be reused in React
+//UI and LOGIC
+
+//For UI --> Components
+//For LOGIC --> REGULAR FUNCTIONS, CUSTOM HOOK
+//CUSOM HOOK when the logic involves react hooks
+//One custom hook should only have one prupose
+//React hook rules apply for custom hooks as well
+
+
 
