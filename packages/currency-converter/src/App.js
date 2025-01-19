@@ -94,11 +94,11 @@ function DropDownCurrency({currencyList, selectedCurrency, onSelectCurrency}){
 }
 
 //React hooks
-//useState
-//useEffect
+//useState x
+//useEffect x
 //useContext
-//useReducer
-//useRef
+//useReducer x
+//useRef x
 //useCallback
 //useMemo
 //useTransition

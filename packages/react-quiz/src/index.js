@@ -1,10 +1,8 @@
-import React, {useState} from "react"
+import React, {setState} from "react"
 import ReactDOM from "react-dom/client" //Default imports
 import "./index.css"
-import App from "./App_new.js"
+import App from "./Components/App"
 
-
-console.log(useState)
 const root = ReactDOM.createRoot(document.getElementById("root"))
 root.render(
     <React.StrictMode>
