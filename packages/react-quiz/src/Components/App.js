@@ -148,3 +148,25 @@ export default function App() {
     </div>
   );
 }
+
+
+//UX optimizations
+
+//1 Prevent wasted renders
+//Memorize components
+//memo, useMemo, useCallback
+//Passing elements as children or regular props
+
+//2Improve app speed and responsiveness
+//useMemo
+//useCallback
+//useTransition
+
+//3Reduce Bundle
+//using less external packages
+//Code splitting and lazy loading
+
+//Rerendering is only caused by
+//1. Change of its state
+//2. A rerender of one of its parent components
+//3. Change on context state

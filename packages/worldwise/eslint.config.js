@@ -14,7 +14,7 @@ export default [
   {
     rules: {
       "no-unused-vars": ["warn"],
-      // "react/prop-types": "warn",
+       "react/prop-types": "warn",
     },
   },
 ];

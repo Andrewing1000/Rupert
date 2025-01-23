@@ -1,0 +1,35 @@
+{
+    "name": "react-quiz_V1",
+    "version": "1.0.0",
+    "private": true,
+    "dependencies": {
+        "json-server": "^1.0.0-beta.3",
+        "react": "^18.1.0",
+        "react-dom": "^18.1.0"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "server": "json-server --watch data/questions.json --port 8000"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.18.0",
+        "eslint": "^9.18.0",
+        "eslint-plugin-react": "^7.37.4",
+        "globals": "^15.14.0"
+    }
+}
