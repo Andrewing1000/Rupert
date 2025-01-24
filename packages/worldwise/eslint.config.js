@@ -1,6 +1,3 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import eslint from "vite-plugin-eslint";
 import globals from "globals";
 import pluginJs from "@eslint/js";
 import pluginReact from "eslint-plugin-react";
