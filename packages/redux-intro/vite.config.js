@@ -5,9 +5,6 @@ import eslint from "vite-plugin-eslint";
 export default defineConfig({
   plugins: [
     react(),
-    eslint({
-      //useEslintrc: false,
-      //overrideConfigFile: "./eslint.config.cjs",
-    }),
+    eslint(),
   ],
 });
