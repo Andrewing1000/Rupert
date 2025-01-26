@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "jsx": "react", // Properly handle JSX in .js/.jsx
+    "checkJs": false, // Don’t type-check if you're purely in JS
+    "baseUrl": "/" // Optional, if you want absolute paths from `src`
+  }
+  //  "include": ["src"] // Make sure your source folder is included
+}
